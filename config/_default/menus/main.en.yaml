@@ -7024,6 +7024,46 @@ menu:
       parent: security_platform_heading
       identifier: workload_protection
       weight: 60000
+    - name: Getting started
+      url: security/workload_protection/getting_started
+      parent: workload_protection
+      identifier: workload_protection_getting_started
+      weight: 90
+    - name: Docker
+      url: security/workload_protection/getting_started/docker
+      parent: workload_protection_getting_started
+      identifier: workload_protection_getting_started_docker
+      weight: 10
+    - name: Kubernetes
+      url: security/workload_protection/getting_started/kubernetes
+      parent: workload_protection_getting_started
+      identifier: workload_protection_getting_started_kubernetes
+      weight: 20
+    - name: ECS (EC2 compute)
+      url: security/workload_protection/getting_started/ecs_ec2
+      parent: workload_protection_getting_started
+      identifier: workload_protection_getting_started_ecs_ec2
+      weight: 30
+    - name: Linux (eBPF)
+      url: security/workload_protection/getting_started/linux_ebpf
+      parent: workload_protection_getting_started
+      identifier: workload_protection_getting_started_linux_ebpf
+      weight: 40
+    - name: Linux (eBPF-less)
+      url: security/workload_protection/getting_started/linux_ebpfless
+      parent: workload_protection_getting_started
+      identifier: workload_protection_getting_started_linux_ebpfless
+      weight: 50
+    - name: Fargate
+      url: security/workload_protection/getting_started/fargate
+      parent: workload_protection_getting_started
+      identifier: workload_protection_getting_started_fargate
+      weight: 60
+    - name: Windows
+      url: security/workload_protection/getting_started/windows
+      parent: workload_protection_getting_started
+      identifier: workload_protection_getting_started_windows
+      weight: 70
     - name: Setup
       url: security/workload_protection/setup
       parent: workload_protection
