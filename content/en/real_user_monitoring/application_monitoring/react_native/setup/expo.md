@@ -312,12 +312,137 @@ const config = new DdSdkReactNativeConfiguration(/* your config */);
 DdSdkReactNative.initialize(config);
 ```
 
+### User interactions tracking
+
+The preferred way to set up interaction tracking is by using the Datadog React Native Babel Plugin (`@datadog/mobile-react-native-babel-plugin`). This plugin automatically enriches React components with contextual metadata, improving interaction tracking accuracy and enabling a range of configuration options.
+
+#### Installation
+
+To install with NPM, run:
+
+```sh
+npm install @datadog/mobile-react-native-babel-plugin
+```
+
+To install with Yarn, run:
+
+```sh
+yarn add @datadog/mobile-react-native-babel-plugin
+```
+
+#### Configure Babel
+
+Add the plugin to your Babel configuration file (`babel.config.js`, `.babelrc`, or similar):
+
+```js
+module.exports = {
+  presets: ["babel-preset-expo"],
+  plugins: ['@datadog/mobile-react-native-babel-plugin']
+};
+```
+
+#### Basic usage
+
+Once the plugin is installed and configured, it automatically tracks interactions on standard React Native components. No additional code changes are required for basic usage.
+
+#### Configuration options
+
+You can customize the plugin's behavior to match your application's needs:
+
+```js
+module.exports = {
+  presets: ["babel-preset-expo"],
+  plugins: [
+    [
+      '@datadog/mobile-react-native-babel-plugin',
+      {
+        sessionReplay: {
+          // Enable SVG tracking for Session Replay (default: false)
+          svgTracking: true
+        },
+        components: {
+          // Use component content as action name (default: true)
+          useContent: true,
+          // Prefix actions with component name (default: true)
+          useNamePrefix: true,
+        },
+      },
+    ],
+  ],
+};
+```
+#### Tracking custom components
+
+For custom components, you can configure specific tracking behavior:
+
+```js
+module.exports = {
+  presets: ["babel-preset-expo"],
+  plugins: [
+    [
+      '@datadog/mobile-react-native-babel-plugin',
+      {
+        components: {
+          tracked: [
+            {
+              name: 'CustomButton',
+              // Prop your component uses as content (if available)
+              // When not set, the plugin tries to find the most likely match
+              contentProp: 'label',
+              handlers: [{event: 'onPress', action: 'TAP'}],
+            },
+            {
+              name: 'CustomInput',
+              handlers: [{event: 'onFocus', action: 'TAP'}],
+            },
+          ],
+        },
+      },
+    ],
+  ],
+};
+```
+
+#### Custom action names
+
+You can specify custom action names for components using the `actionNameAttribute` configuration:
+
+```js
+module.exports = {
+  presets: ["babel-preset-expo"],
+  plugins: [
+    [
+      '@datadog/mobile-react-native-babel-plugin',
+      {
+        actionNameAttribute: 'data-dd-action-name',
+      },
+    ],
+  ],
+};
+```
+
+Then use it in your components:
+
+```jsx
+<Button data-dd-action-name="checkout-button" onPress={handleCheckout}>
+  Complete Purchase
+</Button>
+```
+
 ## Sending data when device is offline
 
-RUM ensures availability of data when your user device is offline. In case of low-network areas, or when the device battery is too low, all the events are first stored on the local device in batches. 
+The React Native SDK ensures availability of data when your user device is offline. In cases of low-network areas, or when the device battery is too low, all events are first stored on the local device in batches. They are sent as soon as the network is available, and the battery is high enough to ensure the React Native SDK does not impact the end user's experience. If the network is not available with your application running in the foreground, or if an upload of data fails, the batch is kept until it can be sent successfully.
+
+This means that even if users open your application while offline, no data is lost.
+
+**Note**: The data on the disk is automatically deleted if it gets too old to ensure the React Native SDK does not use too much disk space.
+
+## Sending data when device is offline
+
+RUM ensures availability of data when your user device is offline. In case of low-network areas, or when the device battery is too low, all the events are first stored on the local device in batches.
 
 Each batch follows the intake specification. They are sent as soon as the network is available, and the battery is high enough to ensure the Datadog SDK does not impact the end user's experience. If the network is not available while your application is in the foreground, or if an upload of data fails, the batch is kept until it can be sent successfully.
- 
+
 This means that even if users open your application while offline, no data is lost. To ensure the SDK does not use too much disk space, the data on the disk is automatically discarded if it gets too old.
 
 ## Troubleshooting

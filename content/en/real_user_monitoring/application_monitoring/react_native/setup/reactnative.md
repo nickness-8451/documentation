@@ -427,7 +427,120 @@ For more information about limitations on the version field, see the [Tags docum
 
 ### User interactions tracking
 
-TODO: Add Babel Plugin documentation (RUM-12773)
+The preferred way to set up interaction tracking is by using the Datadog React Native Babel Plugin (`@datadog/mobile-react-native-babel-plugin`). This plugin automatically enriches React components with contextual metadata, improving interaction tracking accuracy and enabling a range of configuration options.
+
+#### Installation
+
+To install with NPM, run:
+
+```sh
+npm install @datadog/mobile-react-native-babel-plugin
+```
+
+To install with Yarn, run:
+
+```sh
+yarn add @datadog/mobile-react-native-babel-plugin
+```
+
+#### Configure Babel
+
+Add the plugin to your Babel configuration file (`babel.config.js`, `.babelrc`, or similar):
+
+```js
+module.exports = {
+  presets: ['module:@react-native/babel-preset'],
+  plugins: ['@datadog/mobile-react-native-babel-plugin']
+};
+```
+
+#### Basic usage
+
+Once the plugin is installed and configured, it automatically tracks interactions on standard React Native components. No additional code changes are required for basic usage.
+
+#### Configuration options
+
+You can customize the plugin's behavior to match your application's needs:
+
+```js
+module.exports = {
+  presets: ['module:@react-native/babel-preset'],
+  plugins: [
+    [
+      '@datadog/mobile-react-native-babel-plugin',
+      {
+        sessionReplay: {
+          // Enable SVG tracking for Session Replay (default: false)
+          svgTracking: true
+        },
+        components: {
+          // Use component content as action name (default: true)
+          useContent: true,
+          // Prefix actions with component name (default: true)
+          useNamePrefix: true,
+        },
+      },
+    ],
+  ],
+};
+```
+#### Tracking custom components
+
+For custom components, you can configure specific tracking behavior:
+
+```js
+module.exports = {
+  presets: ['module:@react-native/babel-preset'],
+  plugins: [
+    [
+      '@datadog/mobile-react-native-babel-plugin',
+      {
+        components: {
+          tracked: [
+            {
+              name: 'CustomButton',
+              // Prop your component uses as content (if available)
+              // When not set, the plugin tries to find the most likely match
+              contentProp: 'label',
+              handlers: [{event: 'onPress', action: 'TAP'}],
+            },
+            {
+              name: 'CustomInput',
+              handlers: [{event: 'onFocus', action: 'TAP'}],
+            },
+          ],
+        },
+      },
+    ],
+  ],
+};
+```
+
+#### Custom action names
+
+You can specify custom action names for components using the `actionNameAttribute` configuration:
+
+```js
+module.exports = {
+  presets: ['module:@react-native/babel-preset'],
+  plugins: [
+    [
+      '@datadog/mobile-react-native-babel-plugin',
+      {
+        actionNameAttribute: 'data-dd-action-name',
+      },
+    ],
+  ],
+};
+```
+
+Then use it in your components:
+
+```jsx
+<Button data-dd-action-name="checkout-button" onPress={handleCheckout}>
+  Complete Purchase
+</Button>
+```
 
 ## Sending data when device is offline
 
